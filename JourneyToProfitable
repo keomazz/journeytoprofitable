@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keomazz Trading | Choose Your Journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold:#C8A84B; --gold2:#E4C97E; --gold-dim:rgba(200,168,75,0.1);
+  --bg:#060606; --bg2:#0E0E0E; --bg3:#141414; --bg4:#1A1A1A;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12);
+  --text:#EBEBEB; --text2:#999; --text3:#444;
+  --green:#3DBA78; --red:#E05252; --blue:#5B9CF6; --purple:#A78BFA;
+  --live:#3DBA78; --prop1:#5B9CF6; --prop2a:#C8A84B; --prop2b:#A78BFA;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+
+/* ════ NOISE TEXTURE ════ */
+body::before{
+content:’’;position:fixed;inset:0;
+background-image:url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 256 256’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘noise’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23noise)’ opacity=‘0.03’/%3E%3C/svg%3E”);
+pointer-events:none;z-index:9999;opacity:.4;
+}
+
+/* ════ SELECTOR SCREEN ════ */
+#selectorScreen{
+min-height:100vh;display:flex;flex-direction:column;
+position:relative;overflow:hidden;
+}
+.sel-bg{
+position:absolute;inset:0;
+background:
+radial-gradient(ellipse 80% 60% at 20% 20%, rgba(200,168,75,0.06) 0%, transparent 60%),
+radial-gradient(ellipse 60% 80% at 80% 80%, rgba(91,156,246,0.05) 0%, transparent 60%),
+radial-gradient(ellipse 50% 50% at 50% 50%, rgba(61,186,120,0.03) 0%, transparent 70%);
+}
+.sel-grid{
+position:absolute;inset:0;
+background-image:
+linear-gradient(rgba(200,168,75,0.03) 1px,transparent 1px),
+linear-gradient(90deg,rgba(200,168,75,0.03) 1px,transparent 1px);
+background-size:80px 80px;
+}
+.sel-scanline{
+position:absolute;inset:0;
+background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.05) 2px,rgba(0,0,0,0.05) 4px);
+pointer-events:none;
+}
+
+/* Animated corner brackets */
+.corner{position:absolute;width:32px;height:32px;}
+.corner::before,.corner::after{content:’’;position:absolute;background:rgba(200,168,75,0.4);}
+.corner-tl{top:24px;left:24px;}
+.corner-tl::before{top:0;left:0;width:100%;height:1.5px;}
+.corner-tl::after{top:0;left:0;width:1.5px;height:100%;}
+.corner-tr{top:24px;right:24px;}
+.corner-tr::before{top:0;right:0;width:100%;height:1.5px;}
+.corner-tr::after{top:0;right:0;width:1.5px;height:100%;}
+.corner-bl{bottom:60px;left:24px;}
+.corner-bl::before{bottom:0;left:0;width:100%;height:1.5px;}
+.corner-bl::after{bottom:0;left:0;width:1.5px;height:100%;}
+.corner-br{bottom:60px;right:24px;}
+.corner-br::before{bottom:0;right:0;width:100%;height:1.5px;}
+.corner-br::after{bottom:0;right:0;width:1.5px;height:100%;}
+
+.sel-content{
+position:relative;z-index:1;
+flex:1;display:flex;flex-direction:column;
+align-items:center;justify-content:center;
+padding:80px 32px;text-align:center;
+}
+.sel-eyebrow{
+font-family:‘JetBrains Mono’,monospace;
+font-size:10px;letter-spacing:5px;
+color:rgba(200,168,75,0.5);text-transform:uppercase;
+margin-bottom:32px;
+display:flex;align-items:center;gap:12px;justify-content:center;
+}
+.sel-eyebrow::before,.sel-eyebrow::after{content:’’;width:24px;height:1px;background:rgba(200,168,75,0.3);}
+
+.sel-title{
+font-family:‘Playfair Display’,serif;
+font-size:clamp(42px,8vw,96px);
+font-weight:900;line-height:.9;
+margin-bottom:8px;
+background:linear-gradient(135deg,#EBEBEB 0%,#C8A84B 50%,#EBEBEB 100%);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+background-clip:text;
+}
+.sel-subtitle{
+font-family:‘Playfair Display’,serif;
+font-size:clamp(16px,3vw,26px);
+font-style:italic;color:var(–text2);
+margin-bottom:48px;
+}
+.sel-question{
+font-family:‘JetBrains Mono’,monospace;
+font-size:11px;letter-spacing:3px;
+color:rgba(200,168,75,0.7);text-transform:uppercase;
+margin-bottom:32px;
+}
+
+/* Journey cards */
+.journey-cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:2px;
+width:100%;max-width:1000px;
+margin-bottom:40px;
+}
+.j-card{
+background:var(–bg2);
+border:1px solid var(–border);
+padding:32px 28px;
+cursor:pointer;
+position:relative;
+overflow:hidden;
+transition:all .25s;
+text-align:left;
+}
+.j-card::before{
+content:’’;
+position:absolute;top:0;left:0;right:0;
+height:2px;
+transition:all .3s;
+}
+.j-card.live::before{background:var(–live);}
+.j-card.prop1::before{background:var(–prop1);}
+.j-card.prop2a::before{background:var(–prop2a);}
+.j-card.prop2b::before{background:var(–prop2b);}
+
+.j-card::after{
+content:’’;
+position:absolute;inset:0;
+opacity:0;transition:opacity .3s;
+}
+.j-card.live::after{background:radial-gradient(ellipse at 50% 0%,rgba(61,186,120,0.08),transparent 70%);}
+.j-card.prop1::after{background:radial-gradient(ellipse at 50% 0%,rgba(91,156,246,0.08),transparent 70%);}
+.j-card.prop2a::after{background:radial-gradient(ellipse at 50% 0%,rgba(200,168,75,0.08),transparent 70%);}
+.j-card.prop2b::after{background:radial-gradient(ellipse at 50% 0%,rgba(167,139,250,0.08),transparent 70%);}
+.j-card:hover::after{opacity:1;}
+.j-card:hover{transform:translateY(-3px);border-color:var(–border2);}
+
+.j-card-icon{
+font-size:28px;margin-bottom:16px;
+display:block;
+}
+.j-card-tag{
+font-family:‘JetBrains Mono’,monospace;
+font-size:8px;letter-spacing:3px;text-transform:uppercase;
+margin-bottom:8px;
+}
+.j-card.live .j-card-tag{color:var(–live);}
+.j-card.prop1 .j-card-tag{color:var(–prop1);}
+.j-card.prop2a .j-card-tag{color:var(–prop2a);}
+.j-card.prop2b .j-card-tag{color:var(–prop2b);}
+
+.j-card-title{
+font-family:‘Playfair Display’,serif;
+font-size:20px;font-weight:900;
+margin-bottom:10px;line-height:1.1;
+position:relative;z-index:1;
+}
+.j-card-desc{
+font-size:12px;color:var(–text2);
+line-height:1.7;font-weight:300;
+position:relative;z-index:1;
+margin-bottom:20px;
+}
+.j-card-meta{
+display:flex;flex-direction:column;gap:4px;
+position:relative;z-index:1;
+}
+.j-card-meta-item{
+font-family:‘JetBrains Mono’,monospace;
+font-size:9px;letter-spacing:1px;color:var(–text3);
+text-transform:uppercase;
+}
+.j-card-arrow{
+position:absolute;bottom:24px;right:24px;
+font-size:18px;color:var(–text3);
+transition:all .3s;z-index:1;
+}
+.j-card:hover .j-card-arrow{transform:translate(3px,-3px);color:var(–text2);}
+
+/* Ticker bottom */
+.sel-ticker{
+position:absolute;bottom:0;left:0;right:0;
+height:28px;background:rgba(200,168,75,0.05);
+border-top:1px solid rgba(200,168,75,0.1);
+overflow:hidden;display:flex;align-items:center;
+}
+.t-inner{
+display:flex;white-space:nowrap;
+animation:tickScroll 35s linear infinite;
+}
+@keyframes tickScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.t-item{
+font-family:‘JetBrains Mono’,monospace;
+font-size:8px;letter-spacing:2px;
+color:rgba(200,168,75,0.4);text-transform:uppercase;
+padding:0 24px;border-right:1px solid rgba(200,168,75,0.08);
+}
+
+/* ════ JOURNEY SCREEN ════ */
+#journeyScreen{display:none;min-height:100vh;}
+
+/* ── HERO ── */
+.j-hero{
+min-height:85vh;display:flex;flex-direction:column;
+justify-content:flex-end;padding:0 0 64px;
+position:relative;overflow:hidden;
+}
+.j-hero-bg{position:absolute;inset:0;}
+.j-hero-grid{
+position:absolute;inset:0;
+background-image:
+linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),
+linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+background-size:60px 60px;
+}
+.j-hero-glow{
+position:absolute;width:600px;height:600px;
+border-radius:50%;filter:blur(120px);
+top:-100px;right:-100px;opacity:.15;
+}
+.j-hero-vignette{
+position:absolute;inset:0;
+background:radial-gradient(ellipse at 50% 100%,transparent 20%,var(–bg) 70%);
+}
+
+/* Animated ring */
+.j-ring{
+position:absolute;right:80px;top:80px;
+width:300px;height:300px;
+border:1px solid rgba(255,255,255,0.04);
+border-radius:50%;
+animation:ringRotate 25s linear infinite;
+}
+.j-ring::after{
+content:’’;position:absolute;
+top:-4px;left:50%;
+width:8px;height:8px;
+border-radius:50%;margin-left:-4px;
+}
+.j-ring2{
+position:absolute;right:50px;top:50px;
+width:400px;height:400px;
+border:1px solid rgba(255,255,255,0.02);
+border-radius:50%;
+animation:ringRotate 40s linear infinite reverse;
+}
+@keyframes ringRotate{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+.j-hero-content{position:relative;z-index:1;padding:0 56px;}
+.back-btn{
+display:inline-flex;align-items:center;gap:8px;
+font-family:‘JetBrains Mono’,monospace;
+font-size:9px;letter-spacing:3px;text-transform:uppercase;
+color:var(–text3);cursor:pointer;margin-bottom:48px;
+background:none;border:none;padding:0;
+transition:color .2s;
+}
+.back-btn:hover{color:var(–text2);}
+.j-hero-eyebrow{
+font-family:‘JetBrains Mono’,monospace;
+font-size:10px;letter-spacing:4px;
+text-transform:uppercase;margin-bottom:16px;
+}
+.j-hero-title{
+font-family:‘Playfair Display’,serif;
+font-size:clamp(48px,9vw,110px);
+font-weight:900;line-height:.88;
+margin-bottom:16px;
+}
+.j-hero-title em{font-style:italic;}
+.j-hero-subtitle{
+font-family:‘Playfair Display’,serif;
+font-size:clamp(16px,2.5vw,24px);
+font-style:italic;color:var(–text2);
+margin-bottom:32px;
+}
+.j-hero-desc{
+max-width:560px;font-size:14px;
+color:var(–text2);font-weight:300;line-height:1.85;
+border-left:2px solid currentColor;padding-left:20px;
+margin-bottom:40px;
+}
+.j-hero-stats{display:flex;gap:40px;flex-wrap:wrap;}
+.j-stat-label{font-family:‘JetBrains Mono’,monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(–text3);margin-bottom:4px;}
+.j-stat-val{font-family:‘Playfair Display’,serif;font-size:22px;font-weight:700;}
+
+/* ── PROGRESS ── */
+.j-progress{
+padding:32px 56px;
+background:var(–bg2);
+border-bottom:1px solid var(–border);
+position:sticky;top:0;z-index:100;
+backdrop-filter:blur(20px);
+}
+.j-progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.j-progress-label{font-family:‘JetBrains Mono’,monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;}
+.j-progress-pct{font-family:‘Playfair Display’,serif;font-size:24px;font-weight:900;}
+.j-progress-bar{height:2px;background:var(–bg4);position:relative;overflow:visible;margin-bottom:10px;}
+.j-progress-fill{height:100%;transition:width .5s cubic-bezier(.4,0,.2,1);position:relative;}
+.j-progress-fill::after{content:’’;position:absolute;right:-1px;top:-4px;width:10px;height:10px;border-radius:50%;box-shadow:0 0 12px currentColor;background:currentColor;}
+.j-phase-dots{display:flex;justify-content:space-between;}
+.j-phase-dot-label{font-family:‘JetBrains Mono’,monospace;font-size:8px;letter-spacing:1px;color:var(–text3);text-transform:uppercase;}
+
+/* ── PHASE INTRO ── */
+.j-phase-intro{
+padding:72px 56px 36px;
+position:relative;overflow:hidden;
+border-bottom:1px solid var(–border);
+}
+.j-phase-bg-num{
+position:absolute;right:-20px;top:-10px;
+font-family:‘Playfair Display’,serif;
+font-size:200px;font-weight:900;opacity:.025;
+line-height:1;pointer-events:none;color:var(–text);
+}
+.j-phase-line{position:absolute;left:0;top:0;bottom:0;width:2px;}
+.j-phase-tag{font-family:‘JetBrains Mono’,monospace;font-size:9px;letter-spacing:4px;text-transform:uppercase;margin-bottom:12px;}
+.j-phase-title{font-family:‘Playfair Display’,serif;font-size:clamp(28px,5vw,52px);font-weight:900;line-height:1;margin-bottom:12px;}
+.j-phase-desc{font-size:14px;color:var(–text2);max-width:640px;font-weight:300;line-height:1.8;}
+.j-phase-range{font-family:‘JetBrains Mono’,monospace;font-size:9px;letter-spacing:2px;color:var(–text3);margin-top:14px;text-transform:uppercase;}
+
+/* ── DAYS GRID ── */
+.j-days{padding:28px 56px 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;}
+
+/* ── DAY CARD ── */
+.d-card{
+background:var(–bg2);border:1px solid var(–border);
+padding:22px;position:relative;overflow:hidden;
+cursor:pointer;transition:all .2s;
+}
+.d-card:hover{background:var(–bg3);border-color:var(–border2);}
+.d-card.done{border-color:rgba(61,186,120,0.2);background:rgba(61,186,120,0.03);}
+.d-card::before{content:’’;position:absolute;bottom:0;left:0;right:0;height:1px;opacity:0;transition:opacity .3s;}
+.d-card:hover::before{opacity:1;}
+
+.d-phase-bar{position:absolute;top:0;left:0;right:0;height:2px;}
+.d-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.d-num{
+font-family:‘Playfair Display’,serif;
+font-size:42px;font-weight:900;line-height:1;
+opacity:.2;transition:opacity .2s;
+}
+.d-card:hover .d-num,.d-card.done .d-num{opacity:.7;}
+.d-check{
+width:26px;height:26px;border:1.5px solid var(–border2);
+display:flex;align-items:center;justify-content:center;
+transition:all .25s;background:transparent;flex-shrink:0;
+border-radius:2px;
+}
+.d-card.done .d-check{background:var(–green);border-color:var(–green);}
+.d-check-icon{font-size:13px;color:#000;display:none;font-weight:700;}
+.d-card.done .d-check-icon{display:block;}
+
+.d-title{font-size:13px;font-weight:700;margin-bottom:10px;line-height:1.3;}
+.d-tasks{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.d-task{display:flex;gap:7px;align-items:flex-start;font-size:11px;color:var(–text2);line-height:1.5;}
+.d-task::before{content:‘▸’;font-size:9px;flex-shrink:0;margin-top:2px;}
+.d-card.done .d-task{color:var(–text3);text-decoration:line-through;}
+.d-focus{
+margin-top:12px;padding:8px 10px;
+background:var(–bg4);
+font-family:‘JetBrains Mono’,monospace;
+font-size:9px;letter-spacing:1px;line-height:1.5;
+}
+.d-warning{
+margin-top:10px;padding:8px 10px;
+background:rgba(224,82,82,0.06);
+border-left:2px solid rgba(224,82,82,0.4);
+font-size:11px;color:rgba(224,82,82,0.7);line-height:1.5;
+}
+.d-tip{
+margin-top:10px;padding:8px 10px;
+background:rgba(61,186,120,0.06);
+border-left:2px solid rgba(61,186,120,0.3);
+font-size:11px;color:rgba(61,186,120,0.7);line-height:1.5;
+}
+
+/* ── COMPLETION ── */
+.j-completion{
+display:none;padding:80px 56px;text-align:center;
+border-top:1px solid var(–border);
+}
+.j-completion.show{display:block;}
+.j-completion-title{
+font-family:‘Playfair Display’,serif;
+font-size:clamp(36px,7vw,80px);
+font-weight:900;line-height:1;margin-bottom:16px;
+}
+.j-completion-sub{font-size:15px;color:var(–text2);max-width:500px;margin:0 auto 32px;font-weight:300;line-height:1.8;}
+
+/* ── FOOTER ── */
+.j-footer{
+padding:40px 56px;
+display:flex;justify-content:space-between;align-items:center;
+border-top:1px solid var(–border);
+font-family:‘JetBrains Mono’,monospace;
+font-size:9px;letter-spacing:2px;color:var(–text3);text-transform:uppercase;
+}
+
+/* Reset */
+.j-reset{
+position:fixed;bottom:20px;right:20px;
+background:var(–bg3);border:1px solid var(–border);
+color:var(–text3);font-family:‘JetBrains Mono’,monospace;
+font-size:8px;letter-spacing:2px;text-transform:uppercase;
+padding:8px 14px;cursor:pointer;transition:all .2s;z-index:500;
+}
+.j-reset:hover{border-color:var(–red);color:var(–red);}
+
+/* Color themes per journey */
+.theme-live   { –accent:var(–live);   –accent-dim:rgba(61,186,120,0.08); }
+.theme-prop1  { –accent:var(–prop1);  –accent-dim:rgba(91,156,246,0.08); }
+.theme-prop2a { –accent:var(–prop2a); –accent-dim:rgba(200,168,75,0.08); }
+.theme-prop2b { –accent:var(–prop2b); –accent-dim:rgba(167,139,250,0.08); }
+
+/* ── MOBILE ── */
+@media(max-width:640px){
+.sel-content{padding:60px 20px;}
+.journey-cards{grid-template-columns:1fr 1fr;gap:2px;}
+.j-hero-content,.j-progress,.j-phase-intro,.j-days,.j-footer{padding-left:20px;padding-right:20px;}
+.j-hero{min-height:70vh;}
+.j-ring,.j-ring2{display:none;}
+.j-days{grid-template-columns:1fr;}
+}
+</style>
+
+</head>
+<body>
+
+<!-- ════════════════ SELECTOR SCREEN ════════════════ -->
+
+<div id="selectorScreen">
+  <div class="sel-bg"></div>
+  <div class="sel-grid"></div>
+  <div class="sel-scanline"></div>
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <div class="sel-content">
+    <div class="sel-eyebrow">Keomazz Trading — Exclusive Program</div>
+    <div class="sel-title">YOUR<br>JOURNEY</div>
+    <div class="sel-subtitle">30 Days to Profitability</div>
+    <div class="sel-question">What type of account are you trading?</div>
+
+```
+<div class="journey-cards">
+  <div class="j-card live" onclick="startJourney('live')">
+    <span class="j-card-icon">💳</span>
+    <div class="j-card-tag">Live Brokerage</div>
+    <div class="j-card-title">Personal<br>Brokerage Account</div>
+    <p class="j-card-desc">Your own funded account. Real money, real stakes. Built for traders who trade with personal capital on platforms like IBKR, TD, Tradovate.</p>
+    <div class="j-card-meta">
+      <div class="j-card-meta-item">⬤ 30 days · 4 phases</div>
+      <div class="j-card-meta-item">⬤ Start slow, scale smart</div>
+      <div class="j-card-meta-item">⬤ No evaluation pressure</div>
+    </div>
+    <span class="j-card-arrow">↗</span>
+  </div>
+
+  <div class="j-card prop1" onclick="startJourney('prop1')">
+    <span class="j-card-icon">⚡</span>
+    <div class="j-card-tag">Prop Firm · 1 Phase</div>
+    <div class="j-card-title">Single Phase<br>Evaluation</div>
+    <p class="j-card-desc">One evaluation to pass. Faster path to funded. Built for firms like Apex, TradeDay, or any single-phase challenge format.</p>
+    <div class="j-card-meta">
+      <div class="j-card-meta-item">⬤ 30 days · 4 phases</div>
+      <div class="j-card-meta-item">⬤ Pass eval · get funded</div>
+      <div class="j-card-meta-item">⬤ Max drawdown focus</div>
+    </div>
+    <span class="j-card-arrow">↗</span>
+  </div>
+
+  <div class="j-card prop2a" onclick="startJourney('prop2a')">
+    <span class="j-card-icon">🎯</span>
+    <div class="j-card-tag">Prop Firm · 2 Phases</div>
+    <div class="j-card-title">Phase 1<br>Evaluation</div>
+    <p class="j-card-desc">First half of a 2-phase challenge. Days 1–30 focused entirely on passing Phase 1 with consistency. For firms like FTMO, Funded Engineer, MyFundedFutures.</p>
+    <div class="j-card-meta">
+      <div class="j-card-meta-item">⬤ 30 days · Phase 1 only</div>
+      <div class="j-card-meta-item">⬤ Hit profit target safely</div>
+      <div class="j-card-meta-item">⬤ Never blow the drawdown</div>
+    </div>
+    <span class="j-card-arrow">↗</span>
+  </div>
+
+  <div class="j-card prop2b" onclick="startJourney('prop2b')">
+    <span class="j-card-icon">👑</span>
+    <div class="j-card-tag">Prop Firm · 2 Phases</div>
+    <div class="j-card-title">Phase 2<br>Verification</div>
+    <p class="j-card-desc">You passed Phase 1. Now you verify. Lower profit target, same drawdown rules. Days 1–30 focused on verification and transitioning to funded trader.</p>
+    <div class="j-card-meta">
+      <div class="j-card-meta-item">⬤ 30 days · Phase 2 + Funded</div>
+      <div class="j-card-meta-item">⬤ Lower target, same rules</div>
+      <div class="j-card-meta-item">⬤ Payout strategy built in</div>
+    </div>
+    <span class="j-card-arrow">↗</span>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="sel-ticker">
+    <div class="t-inner">
+      <span class="t-item">Live Brokerage — Personal Capital</span>
+      <span class="t-item">Prop Firm 1-Phase — Single Evaluation</span>
+      <span class="t-item">Prop Firm 2-Phase — Phase 1 Challenge</span>
+      <span class="t-item">Prop Firm 2-Phase — Phase 2 Verification</span>
+      <span class="t-item">30 Days · One Setup · The Window</span>
+      <span class="t-item">9:30 AM — The Window Opens</span>
+      <span class="t-item">Live Brokerage — Personal Capital</span>
+      <span class="t-item">Prop Firm 1-Phase — Single Evaluation</span>
+      <span class="t-item">Prop Firm 2-Phase — Phase 1 Challenge</span>
+      <span class="t-item">Prop Firm 2-Phase — Phase 2 Verification</span>
+      <span class="t-item">30 Days · One Setup · The Window</span>
+      <span class="t-item">9:30 AM — The Window Opens</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ JOURNEY SCREEN ════════════════ -->
+
+<div id="journeyScreen"></div>
+
+<script>
+(function(){
+'use strict';
+
+var STORAGE_KEY = 'keomazz_journey_v2';
+
+// ════════════════════════════════════════════════════════
+// JOURNEY DATA
+// ════════════════════════════════════════════════════════
+
+var JOURNEYS = {
+
+// ─────────────────────────────────────────────
+// LIVE BROKERAGE
+// ─────────────────────────────────────────────
+live: {
+  id:'live',
+  theme:'theme-live',
+  accent:'#3DBA78',
+  accentGlow:'rgba(61,186,120,0.15)',
+  title:'LIVE<br><em>BROKERAGE</em>',
+  subtitle:'Personal Capital · Real Execution',
+  eyebrow:'Live Brokerage Journey',
+  desc:'Your own money. Your own rules. No evaluation deadlines, no drawdown rules from a firm. Just you and the market. This journey builds consistency from zero with real money at minimal risk, scaling only when the data says you\'re ready.',
+  stats:[
+    {label:'Duration',val:'30 Days'},
+    {label:'Start Size',val:'1 MNQ'},
+    {label:'Phases',val:'4'},
+    {label:'Risk/Trade',val:'1–2%'},
+  ],
+  phases:[
+    {
+      num:'01',tag:'Phase One · Days 1–7',
+      title:'Study & Mark Levels',
+      desc:'No live trading yet. Pure study, chart reading, and building the habit of doing The Read every morning before 9 AM. You are building the foundation this week.',
+      range:'Days 01 → 07 · Zero trades · All study'
+    },
+    {
+      num:'02',tag:'Phase Two · Days 8–14',
+      title:'TradingView Replay',
+      desc:'Real charts, zero real money. TradingView Replay only. Build your execution habits without financial risk. Every replay trade gets journaled — no exceptions.',
+      range:'Days 08 → 14 · Replay only · Journal everything'
+    },
+    {
+      num:'03',tag:'Phase Three · Days 15–23',
+      title:'Go Live — 1 MNQ Only',
+      desc:'Real money, absolute minimum size. 1 MNQ contract. Goal is not profit — it is clean execution of the Full Stack checklist every single day.',
+      range:'Days 15 → 23 · 1 MNQ · Full Stack required'
+    },
+    {
+      num:'04',tag:'Phase Four · Days 24–30',
+      title:'Review & Carefully Scale',
+      desc:'Review all your data. Scale to 2 MNQ only if Phase 3 showed consistent rule compliance. No emotion in this decision — only the journal speaks.',
+      range:'Days 24 → 30 · Scale with evidence only'
+    }
+  ],
+  days:[
+    {day:1,phase:0,title:'Full Course Read — Chapters 1 to 4',tasks:['Read Chapters 1–4 completely — no skipping','Write the definition of The Current in your own words','Write the definition of The Flush in your own words','Write what iFVG means and where it forms'],focus:'FOUNDATION · Read. Absorb. Write notes.'},
+    {day:2,phase:0,title:'HTF Structure — NQ Daily Chart',tasks:['Open NQ on TradingView — Daily timeframe only','Mark every swing high and swing low — last 3 months','Determine: is current structure Bullish or Bearish?','Write your current directional bias in your journal'],focus:'STRUCTURE · Daily chart — build your top-down eye'},
+    {day:3,phase:0,title:'Mark All Weekly & Daily Key Levels',tasks:['Weekly: mark current week high/low, previous week high/low','Daily: mark PDH and PDL for today','Mark any unmitigated FVGs on the Daily chart','Mark at least 2 clear Order Blocks on 4H'],focus:'LEVELS · These are your landmarks — memorize them'},
+    {day:4,phase:0,title:'Liquidity Pools — 5 Days of Data',tasks:['Open NQ 1H — last 5 trading days','For each day: mark Asia High/Low and London High/Low','Find and mark every equal high and equal low visible','Circle the 3 most obvious liquidity pools right now'],focus:'LIQUIDITY · Train your eye to see pools instantly'},
+    {day:5,phase:0,title:'Find 3 Historical Flushes on 5M',tasks:['Open NQ 5M — go back 2 weeks','Find 3 clear Flush setups (sweep wick + close back)','For each: what liquidity level was swept?','What happened in the next 30 minutes after each flush?'],focus:'THE FLUSH · Pattern recognition — find it 100 times'},
+    {day:6,phase:0,title:'Find iFVG on 1M After Each Flush',tasks:['Take your 3 flushes from yesterday','For each: drop to 1M chart','Find the inversion FVG that formed','Draw the rectangle — note the exact price zone'],focus:'iFVG · 1M precision — this is where you enter'},
+    {day:7,phase:0,title:'Week 1 Review — Teach It Back',tasks:['Cover your notes and explain The Current out loud','Explain The Flush out loud — what makes it valid?','Explain the iFVG — where does it form and why?','If you can teach it, you understand it. If not, re-read.'],focus:'REVIEW · You must own this knowledge completely'},
+    {day:8,phase:1,title:'First Replay — Observer Mode',tasks:['Open TradingView Replay — NQ 5M','Choose any day from last month','Mark your levels BEFORE pressing play','Watch the full open 9:30–10:30 — did a flush happen?'],focus:'REPLAY · Watch first. Trade later. Build the eye.'},
+    {day:9,phase:1,title:'Replay — 3 Bias Tests',tasks:['Pick 3 different days in Replay','For each: determine The Current before pressing play','Press play — was your bias correct?','Journal: what signal confirmed or changed your bias?'],focus:'BIAS ACCURACY · 3 tests — score yourself honestly'},
+    {day:10,phase:1,title:'Replay — First Simulated Entry',tasks:['Find a day with a clear Flush in Replay','Stop at the flush moment — drop to 1M','Find the iFVG — mark entry, stop, and target','Simulate the trade — note the result in journal'],focus:'FIRST TRADE · No money, full rules — treat it as real'},
+    {day:11,phase:1,title:'Replay — 3 Full Entries',tasks:['Complete 3 full replay trades with full checklist','For each: Current → Flush → BOS → iFVG → CISD → Entry','Set stop and both targets before confirming','Journal: did you follow every rule on every trade?'],focus:'EXECUTION · 3 trades · checklist compliance = the goal'},
+    {day:12,phase:1,title:'Replay — Identify a Dead Water Day',tasks:['Find a day in Replay where no setup formed','Identify exactly why: no flush? No Current? No iFVG?','Practice closing the charts with zero trades','Journal: how did sitting out feel? Was it difficult?'],focus:'DEAD WATER · The ability to do nothing is a skill'},
+    {day:13,phase:1,title:'Replay — SMT Divergence Hunt',tasks:['Open NQ + ES side by side in Replay','Find 2 clear SMT divergence examples at a sweep','Which instrument swept? Which one failed?','What happened after each divergence?'],focus:'SMT · Split signal training — add this layer to your eye'},
+    {day:14,phase:1,title:'Replay Week Review — Honest Grade',tasks:['Review every journal entry from days 8–13','Count: trades with Full Stack vs impulsive entries','What was your biggest mistake this week?','Grade yourself A / B / C — write why'],focus:'HONESTY · The journal never lies. Your ego might.'},
+    {day:15,phase:2,title:'First Live Day — Watch Only',tasks:['Complete The Read before 9:00 AM — no exceptions','Be at charts at 9:00 AM sharp','Watch The Window 9:30–10:30 — zero trades today','Journal: was there a valid setup? What would you have done?'],focus:'LIVE OBSERVATION · Real market. Zero execution. Build nerve.'},
+    {day:16,phase:2,title:'First Live Trade — 1 MNQ',tasks:['Complete The Read — mark all levels before 9 AM','Wait for Full Stack: Current + Flush + BOS + iFVG + CISD','1 MNQ only — set stop before confirming order','Stop at 10:30 AM — journal immediately after'],focus:'1 MNQ · Real money. Minimum size. Full rules only.',warning:'If no Full Stack setup appears: NO TRADE. Dead Water day.'},
+    {day:17,phase:2,title:'Focus: Stop Placement',tasks:['Today\'s focus: stop placement discipline','Before entry: identify the stop level on the 1M chart','Stop = 2–5 ticks beyond the sweep wick extreme','Confirm the order only AFTER stop is mentally locked in'],focus:'STOP FIRST · Build the habit before it becomes expensive'},
+    {day:18,phase:2,title:'Focus: Target Identification',tasks:['During The Read: identify TP1 and TP2 before 9:30','TP1 = first liquidity pool · TP2 = main draw on liquidity','At TP1: close 50% immediately + move stop to breakeven','Journal: did you take TP1 or hold through it?'],focus:'TARGETS · Know the exit before you enter'},
+    {day:19,phase:2,title:'Focus: Full Timeframe Drill',tasks:['After flush: run the drill consciously and in order','5M BOS confirmed → 3M aligned → 2M aligned → 1M iFVG + CISD','If one timeframe doesn\'t correspond: wait or skip','Journal: did all 4 timeframes correspond today?'],focus:'5M → 3M → 2M → 1M · No shortcuts. Every time.'},
+    {day:20,phase:2,title:'Focus: Dead Water Discipline',tasks:['If no clear setup: do not trade','Write bias in journal before 9:30 no matter what','If Dead Water: close charts at 10:30 with zero trades','Journal: how confident are you at identifying Dead Water?'],focus:'SITTING OUT · Protecting capital is always the right trade'},
+    {day:21,phase:2,title:'Mid-Phase Live Review',tasks:['Review all trades from days 16–20','Calculate: win rate, average R, max loss, max win','What is your most common mistake?','Write one specific rule you will tighten this week'],focus:'DATA OVER FEELING · Let numbers guide you, not emotion'},
+    {day:22,phase:2,title:'SMT-Only Day',tasks:['Today: only enter if SMT divergence is confirmed','No SMT = watch only, no entry regardless','This filters you to the highest quality setups only','Journal: was there SMT? Describe what you saw'],focus:'CLEAN FLUSH ONLY · Premium filter — highest standard'},
+    {day:23,phase:2,title:'Phase 3 Closing Day',tasks:['Trade normally with Full Stack rules','After session: write a complete Phase 3 summary','Total trades, win rate, rule compliance score','Honest answer: are you ready to scale to 2 MNQ?'],focus:'HONEST ASSESSMENT · Scale only if data says yes'},
+    {day:24,phase:3,title:'Full 23-Day Journal Audit',tasks:['Read every journal entry from day 1 to day 23','Total trades, wins, losses, R average','Your top 3 strengths as a trader','Your top 3 weaknesses — be brutally honest'],focus:'AUDIT · You cannot fix what you haven\'t identified'},
+    {day:25,phase:3,title:'Scale Decision — Data Only',tasks:['If Phase 3 win rate > 40% AND full rule compliance: scale to 2 MNQ','If not consistent: stay at 1 MNQ — this is correct, not weak','Write your decision and reasoning in journal','Commit to that size for the entire final week'],focus:'SCALE WITH EVIDENCE · Not with emotion or impatience'},
+    {day:26,phase:3,title:'Execute at New Size',tasks:['Trade your decided size — same rules, same checklist','Do not adjust size mid-session under any circumstances','Did the new size affect your emotional state?','Journal: was your execution different at bigger size?'],focus:'PROCESS OVER P&L · The method is the same at any size'},
+    {day:27,phase:3,title:'Consistency Audit Day',tasks:['After session: answer this — did I follow every rule?','Yes to all = green day regardless of win or loss','No to any = which rule broke and why did it break?','This is the only metric that actually matters'],focus:'RULE COMPLIANCE · Profit follows discipline, not the reverse'},
+    {day:28,phase:3,title:'The Long Game Vision',tasks:['Trade The Window as normal','What does your account look like if you do this every day for 12 months?','Write your 6-month specific trading goal with numbers','What does compounded consistency look like for you?'],focus:'VISION · Small consistent wins destroy big inconsistent bets'},
+    {day:29,phase:3,title:'Prepare Your Final Review',tasks:['List every lesson learned — minimum 10','List every mistake made and how you corrected it','What does your trading look like from Day 31 forward?','Screenshot your 30-day progress'],focus:'LEGACY · The habits built in 30 days last a lifetime'},
+    {day:30,phase:3,title:'Day 30 — You Made It',tasks:['Trade The Window one final time — full rules','After: read your Day 1 journal entry and feel the difference','Write a letter to Day 1 you — what do you know now?','Share your journey with Keomazz. You earned it.'],focus:'30 DAYS COMPLETE · You are not the same trader you were.',tip:'Most people never make it to Day 30. You did. That\'s not luck. That\'s character.'}
+  ]
+},
+
+// ─────────────────────────────────────────────
+// PROP 1-PHASE
+// ─────────────────────────────────────────────
+prop1: {
+  id:'prop1',
+  theme:'theme-prop1',
+  accent:'#5B9CF6',
+  accentGlow:'rgba(91,156,246,0.15)',
+  title:'PROP<br><em>1-PHASE</em>',
+  subtitle:'Single Evaluation · Pass & Get Funded',
+  eyebrow:'Prop Firm · 1-Phase Evaluation',
+  desc:'One evaluation. One shot. Pass the profit target without breaching the drawdown rules, and you\'re funded. This journey treats the evaluation like a professional assignment — calm, disciplined, systematic. No gambling. No hero trades.',
+  stats:[
+    {label:'Duration',val:'30 Days'},
+    {label:'Goal',val:'Pass Eval'},
+    {label:'Max Risk/Day',val:'Never > 2%'},
+    {label:'Priority',val:'Drawdown Safe'},
+  ],
+  phases:[
+    {
+      num:'01',tag:'Phase One · Days 1–7',
+      title:'Learn the Rules & the Strategy',
+      desc:'Before you touch the evaluation account, you must know your firm\'s exact rules by heart. Max daily loss, max total drawdown, profit target, minimum trading days. These rules are non-negotiable. This week is pure knowledge.',
+      range:'Days 01 → 07 · Zero trades · Rules + Strategy'
+    },
+    {
+      num:'02',tag:'Phase Two · Days 8–14',
+      title:'Replay — Practice Under Pressure',
+      desc:'Simulate the evaluation pressure in Replay. Treat each session as if it\'s your real eval account. Track simulated P&L. Practice staying under daily loss limits even on losing days.',
+      range:'Days 08 → 14 · Replay · Simulated eval conditions'
+    },
+    {
+      num:'03',tag:'Phase Three · Days 15–23',
+      title:'Live Evaluation Execution',
+      desc:'Real evaluation account. The goal is consistency, not speed. Hit the profit target gradually. Never get close to the daily loss limit. One clean trade per day is better than three impulsive ones.',
+      range:'Days 15 → 23 · Real eval · Safety-first execution'
+    },
+    {
+      num:'04',tag:'Phase Four · Days 24–30',
+      title:'Pass & Transition to Funded',
+      desc:'Review your eval progress. If target is reached: stop early, protect the account. If not yet: continue clean execution for the remaining days. Never rush. A slow pass beats a blown account.',
+      range:'Days 24 → 30 · Target hit or continue clean · Never rush'
+    }
+  ],
+  days:[
+    {day:1,phase:0,title:'Read Your Firm\'s Rules — Completely',tasks:['Write down your firm\'s exact profit target percentage','Write down your firm\'s daily loss limit','Write down your firm\'s maximum total drawdown','Write down minimum trading days required'],focus:'RULES · Know them better than your strategy'},
+    {day:2,phase:0,title:'Read the Full Course — Chapters 1–4',tasks:['Read Chapters 1–4 of The Window course','Write the definition of The Current in your own words','Write the definition of The Flush in your own words','Write what makes a valid Full Stack entry'],focus:'STRATEGY · Know what you\'re trading before you trade it'},
+    {day:3,phase:0,title:'HTF Structure & Levels',tasks:['Open NQ — Daily and 4H charts','Mark swing highs, swing lows, PDH/PDL','Mark any Daily FVGs and 4H Order Blocks','Determine The Current: Bullish or Bearish right now?'],focus:'HTF MAP · Start every session with this ritual'},
+    {day:4,phase:0,title:'Liquidity Mapping — 5 Days',tasks:['Mark Asia High/Low and London High/Low for the last 5 days','Mark every equal high and equal low visible','Identify the 3 most obvious liquidity pools right now','Write your Magnetic Target for today'],focus:'LIQUIDITY · This is where the market is going'},
+    {day:5,phase:0,title:'Find 3 Historical Flushes',tasks:['Go back 2 weeks on NQ 5M','Find 3 clear Flush setups','For each: what level was swept and what happened after?','Journal: how quickly did price reverse after each flush?'],focus:'PATTERN · Find it 100 times before you trade it once'},
+    {day:6,phase:0,title:'iFVG and CISD — Deep Study',tasks:['Take 3 flushes from yesterday — drop to 1M each','Find the inversion FVG zone on 1M','Identify where CISD occurred inside the iFVG','This is the exact entry — study it until it\'s automatic'],focus:'iFVG + CISD · Your precise entry — know it cold'},
+    {day:7,phase:0,title:'Risk Management Deep Dive',tasks:['Calculate: what is your max daily loss in dollars?','Calculate: what is 1% risk on your eval account?','Calculate: if your stop is 20pts on NQ, how many contracts max?','Write these numbers on paper and keep them visible'],focus:'RISK MATH · Know your numbers before markets open'},
+    {day:8,phase:1,title:'Replay — First Eval Simulation',tasks:['Open Replay — NQ 5M — pick any recent day','Track a simulated P&L starting at $0','Mark levels → watch the open → identify the setup','Did a flush happen? What was the Full Stack quality?'],focus:'EVAL SIMULATION · Treat Replay like real eval money'},
+    {day:9,phase:1,title:'Replay — 3 Simulated Days',tasks:['Run 3 full replay sessions back to back','For each: simulate entry, stop, target with exact position size','Track running P&L across all 3 — are you in profit?','Journal: did you ever approach the daily loss limit?'],focus:'CONSECUTIVE DAYS · Build the rhythm of daily consistency'},
+    {day:10,phase:1,title:'Replay — Losing Day Protocol',tasks:['Find a day in Replay where the setup failed and you lost','After the losing trade: did you want to immediately re-enter?','Practice the rule: 2 losses in a day = done for that day','Journal: how did it feel to stop after 2 losses?'],focus:'LOSS CONTROL · How you handle losses defines your account'},
+    {day:11,phase:1,title:'Replay — 3 Full Stack Entries',tasks:['3 full replay trades — Full Stack required for each','No entry without: Current + Flush + BOS + iFVG + CISD','Track position size based on your eval account size','What was the simulated result at end of 3 trades?'],focus:'EXECUTION · Quality over quantity. Always.'},
+    {day:12,phase:1,title:'Replay — Drawdown Stress Test',tasks:['Start the session already -1% (simulate a bad start)','With that buffer: would you still take the same setups?','Practice being more conservative when already negative','Journal: how does being down change your decision making?'],focus:'MENTAL PRESSURE · The eval tests your mind, not your strategy'},
+    {day:13,phase:1,title:'Replay — Perfect Day Protocol',tasks:['Simulate a perfect day: one clean Full Stack trade','Hit TP1 → close 50% → move stop to breakeven','Let TP2 run to the Magnetic Target','Journal: can you replicate this every single day?'],focus:'THE STANDARD · One clean trade per day passes any eval'},
+    {day:14,phase:1,title:'Pre-Eval Final Assessment',tasks:['Review all replay sessions from days 8–13','Calculate simulated win rate and average R','Are you consistently staying under daily loss limit?','Write: am I ready to start the real evaluation? Be honest.'],focus:'READINESS CHECK · Only start the eval when you\'re truly ready'},
+    {day:15,phase:2,title:'Eval Day 1 — Observe Only',tasks:['Open eval account — do NOT trade today','Complete The Read and mark all levels','Watch The Window 9:30–10:30 fully','Journal: what was the setup quality today?'],focus:'FIRST DAY · Observation builds confidence more than action'},
+    {day:16,phase:2,title:'Eval Day 2 — First Real Entry',tasks:['Full Stack required — no exceptions on eval account','Minimum position size for first eval trade','Set stop BEFORE confirming order','Journal immediately after the trade closes'],focus:'EVAL LIVE · Calm execution. One trade. Done.',warning:'If no Full Stack setup: DO NOT TRADE. Protecting the account is always the right decision on an eval.'},
+    {day:17,phase:2,title:'Eval Day 3 — Drawdown Awareness',tasks:['Before opening charts: check your current drawdown level','Write today\'s max risk budget based on remaining drawdown','If already at 50% of max drawdown: reduce size by half','Never in any scenario approach 80% of max drawdown'],focus:'DRAWDOWN FIRST · Check it before every single session'},
+    {day:18,phase:2,title:'Eval Day 4 — Patience Test',tasks:['If no Full Stack setup appears today: close charts at 10:30','A day with no trade on an eval is a profitable day','Write in journal: no trade today and why','Track your drawdown — you are still in the same position'],focus:'DEAD WATER ON EVAL · Zero trades = zero risk = eval still alive'},
+    {day:19,phase:2,title:'Eval Day 5 — Progress Check',tasks:['Review current P&L on eval account','How many trading days completed out of minimum required?','Calculate: how much more do you need to hit target?','Can you hit it with 1 clean trade per day at 1% risk?'],focus:'PACE CHECK · Steady wins the eval. Never rush.'},
+    {day:20,phase:2,title:'Eval Day 6 — SMT Priority Session',tasks:['Today: only enter if SMT divergence is confirmed','No SMT = observation only, no entry','This forces the highest quality setup only','What was your result?'],focus:'HIGHEST STANDARD · SMT filters the best setups automatically'},
+    {day:21,phase:2,title:'Eval Mid-Point Review',tasks:['Review all eval trades so far','Are you on pace to hit the profit target by day 30?','Have you stayed under daily loss limit every day?','Adjust pace if needed — never increase risk to catch up'],focus:'PACE ADJUSTMENT · Slow and consistent beats fast and reckless'},
+    {day:22,phase:2,title:'Eval Day 8 — Full Stack Only',tasks:['Strict Full Stack required today — no B-grade setups','If setup is not A or A+: wait or skip','One perfect trade is worth more than three mediocre ones','Journal your reasoning for taking or skipping today\'s setup'],focus:'A-GRADE ONLY · The eval rewards patience and quality'},
+    {day:23,phase:2,title:'Eval Day 9 — Closing Phase 3',tasks:['Trade your normal session','Where are you on the profit target?','If above 70% of target: start being more conservative with size','If below 50%: continue with normal clean execution'],focus:'CONSERVATIVE MANAGEMENT · Protect what you\'ve built'},
+    {day:24,phase:3,title:'Eval Days 10–11 — Protect Mode',tasks:['If profit target is reached: stop trading. Account is passed.','If not yet: continue clean execution at normal size','Never increase size in the final week to rush the pass','Write: what is your daily goal for the remaining days?'],focus:'NO RUSH · A slow pass is still a pass. A blow is not.'},
+    {day:25,phase:3,title:'Eval Day 12 — Final Push',tasks:['Trade The Window with full rules','If within 0.5% of target: reduce size by 50%','You are close — protect it now, don\'t gamble it away','Journal: how does being close to the target affect your mindset?'],focus:'NEAR THE FINISH · This is where most people blow it. Stay calm.'},
+    {day:26,phase:3,title:'Eval Day 13 — Target Zone',tasks:['If target is within reach today: execute one clean trade','TP1 hit → stop to breakeven → let TP2 run to target','If target is hit mid-trade: close everything immediately','Protect the pass — no more trading today if target is hit'],focus:'PROTECT THE PASS · Close it when you have it'},
+    {day:27,phase:3,title:'Post-Target or Continue',tasks:['If passed: do not trade today — account is safe','Read your full journal from the evaluation period','What worked? What almost cost you the account?','Prepare your message to the prop firm'],focus:'PASSED? STOP. · The eval is a tool, not a game'},
+    {day:28,phase:3,title:'Full Evaluation Review',tasks:['Write a complete review of your evaluation performance','Total trades, win rate, max drawdown reached, profit target hit','What was your biggest psychological challenge?','What will you do differently on the funded account?'],focus:'TRANSITION PREP · Funded trading is different from eval trading'},
+    {day:29,phase:3,title:'Prepare for Funded Account',tasks:['Review your prop firm\'s funded account rules — they may differ from eval','Payout schedule, scaling rules, funded drawdown limits','Write your funded account trading plan: size, risk per trade, daily stop','You are no longer an eval trader. You are a funded trader.'],focus:'NEW LEVEL · Same strategy. Different stakes. Same discipline.'},
+    {day:30,phase:3,title:'Day 30 — Evaluation Complete',tasks:['If funded: place your first funded trade with full rules','If still passing: execute cleanly and close the eval','Write a letter to Day 1 eval you — what do you know now?','Share your result with Keomazz — you earned it'],focus:'30 DAYS · Evaluation complete. Funded trader status.',tip:'The eval was never about the money. It was about proving to yourself that you can execute under pressure. You did.'}
+  ]
+},
+
+// ─────────────────────────────────────────────
+// PROP 2-PHASE — PHASE 1
+// ─────────────────────────────────────────────
+prop2a: {
+  id:'prop2a',
+  theme:'theme-prop2a',
+  accent:'#C8A84B',
+  accentGlow:'rgba(200,168,75,0.15)',
+  title:'PHASE 1<br><em>CHALLENGE</em>',
+  subtitle:'2-Phase Evaluation · Pass Phase 1',
+  eyebrow:'Prop Firm · 2-Phase · Phase 1',
+  desc:'Phase 1 has the highest profit target and the same strict drawdown rules. Your goal over 30 days is to hit the profit target cleanly, stay under drawdown, and complete minimum trading days. Consistency is your only weapon.',
+  stats:[
+    {label:'Goal',val:'Hit P1 Target'},
+    {label:'Priority',val:'Drawdown Safe'},
+    {label:'Strategy',val:'1 Trade/Day'},
+    {label:'Mindset',val:'Calm & Steady'},
+  ],
+  phases:[
+    {num:'01',tag:'Phase One · Days 1–7',title:'Know the Rules Cold',desc:'Before any trade: memorize your exact Phase 1 rules. Daily loss limit, max drawdown, profit target percentage, min trading days. These numbers are your boundaries. Operate within them perfectly.',range:'Days 01 → 07 · Zero trades · Rules + Setup study'},
+    {num:'02',tag:'Phase Two · Days 8–14',title:'Replay — Eval Conditions',desc:'Simulate Phase 1 conditions in Replay. Track simulated P&L as if it were a real Phase 1 account. Practice staying within daily loss limits even on losing days. Build the psychological muscle.',range:'Days 08 → 14 · Replay · Simulate Phase 1 pressure'},
+    {num:'03',tag:'Phase Three · Days 15–23',title:'Phase 1 Live Execution',desc:'Real Phase 1 account. Safety first. One clean trade per day. Never approach the daily loss limit. Hit the profit target gradually — rushing is how you fail at the finish line.',range:'Days 15 → 23 · Real Phase 1 · Steady execution'},
+    {num:'04',tag:'Phase Four · Days 24–30',title:'Close Out Phase 1',desc:'If target is close: reduce size and protect. If target is already hit: stop trading immediately. Phase 2 is waiting. Don\'t blow Phase 1 trying to be a hero in the last week.',range:'Days 24 → 30 · Hit target · Protect · Move to Phase 2'}
+  ],
+  days:[
+    {day:1,phase:0,title:'Write Down Every Phase 1 Rule',tasks:['Profit target % — write it down','Daily loss limit % — write it down','Maximum total drawdown % — write it down','Minimum trading days — write it down'],focus:'RULES · Before anything else. Know your limits cold.'},
+    {day:2,phase:0,title:'Full Course Read — Chapters 1–4',tasks:['Read Chapters 1–4 of The Window','Focus especially on The Flush and iFVG chapters','Write the Full Stack checklist from memory','Could you explain this to someone else? If not, re-read.'],focus:'STRATEGY · You need perfect execution on Phase 1'},
+    {day:3,phase:0,title:'HTF Analysis — NQ Right Now',tasks:['Open NQ Daily + 4H charts','Determine current structure: Bullish or Bearish?','Mark PDH/PDL, weekly high/low, key FVGs','Write today\'s Magnetic Target — where is NQ drawing?'],focus:'BIG PICTURE · Know where the market wants to go'},
+    {day:4,phase:0,title:'Liquidity Mapping',tasks:['Mark Asia High/Low for today','Mark London High/Low for today','Find all equal highs and equal lows on 1H','Identify the 3 most obvious pools right now'],focus:'LIQUIDITY · Train your eye to see this in seconds'},
+    {day:5,phase:0,title:'Risk Calculations for Phase 1',tasks:['Your Phase 1 account size × daily loss limit % = your max daily loss in $','Your Phase 1 account size × 1% = your max risk per trade','If stop is 20pts on NQ: how many contracts can you trade?','Write these numbers on paper. Keep them visible every day.'],focus:'RISK MATH · Know your numbers before every session'},
+    {day:6,phase:0,title:'Find 3 Valid Flushes — Historical',tasks:['NQ 5M — go back 2 weeks','Find 3 clean Flush setups with iFVG confirmation','For each: mark entry, stop, and TP zones','Calculate R:R for each — were they all above 2:1?'],focus:'QUALITY FILTER · Phase 1 only rewards clean setups'},
+    {day:7,phase:0,title:'Week 1 Review — Pre-Eval Readiness',tasks:['Do you know all Phase 1 rules by heart?','Can you identify a Full Stack setup in under 60 seconds?','Do you know your exact max risk per trade in dollars?','If yes to all 3: you are ready for Phase 2 of this journey'],focus:'READINESS CHECK · Confidence from preparation, not from luck'},
+    {day:8,phase:1,title:'Replay — Phase 1 Simulation Day 1',tasks:['Open Replay — treat it as real Phase 1 account','Starting P&L: $0 — track every trade against your targets','Mark levels → watch open → identify Full Stack or Dead Water','What was your simulated result?'],focus:'SIMULATE THE PRESSURE · Every replay trade is a Phase 1 trade'},
+    {day:9,phase:1,title:'Replay — Consecutive Session Test',tasks:['Run 3 replay sessions back to back — different days','Track running P&L across all 3','Did you ever approach the daily loss limit?','If yes: what caused it and what rule was broken?'],focus:'CONSISTENCY · 3 days of clean execution beats 1 lucky day'},
+    {day:10,phase:1,title:'Replay — The Losing Day',tasks:['Simulate a losing day — stop was hit','After the loss: resist the urge to immediately re-enter','If 2 losses in a day: close charts — that is the rule','Journal: how does a loss affect your next decision?'],focus:'LOSS PROTOCOL · How you lose determines if you pass'},
+    {day:11,phase:1,title:'Replay — 3 Perfect Trades',tasks:['3 Full Stack trades — strict checklist for each','Every entry has a stop set before confirming','Every trade has TP1 and TP2 identified before entry','What was your total simulated result at end of 3 trades?'],focus:'STANDARD · This is the quality Phase 1 requires'},
+    {day:12,phase:1,title:'Replay — Drawdown Awareness',tasks:['Start the session at -1.5% (simulate pressure)','With reduced buffer: are you more conservative?','Practice being cautious when already negative','Journal: did being negative change your entry criteria?'],focus:'MENTAL PRESSURE · The eval is mostly psychological'},
+    {day:13,phase:1,title:'Replay — One Trade Per Day',tasks:['Today: only one trade allowed — make it count','Force yourself to wait for the best setup of the session','If the first setup isn\'t A-grade: wait for A+','Journal: how did waiting for the best setup feel?'],focus:'ONE TRADE RULE · Quality beats volume in Phase 1'},
+    {day:14,phase:1,title:'Final Replay Review — Go/No Go',tasks:['Review all replay sessions from days 8–13','Simulated win rate, average R, max drawdown touched','Write: am I executing the strategy cleanly and consistently?','Go / No Go decision for starting the real Phase 1'],focus:'DECISION POINT · Only start Phase 1 when you\'re truly ready'},
+    {day:15,phase:2,title:'Phase 1 Day 1 — Observe Only',tasks:['Log into Phase 1 account — do NOT trade today','Complete The Read — mark all levels as normal','Watch The Window 9:30–10:30 — observe only','Was there a valid Full Stack setup today? Journal it.'],focus:'FIRST DAY · Calm observation builds better execution'},
+    {day:16,phase:2,title:'Phase 1 Day 2 — First Live Trade',tasks:['Full Stack required — strictly enforced','Minimum position size based on your 1% risk calculation','Stop set BEFORE order is confirmed','Close charts after one trade — do not look for a second'],focus:'ONE AND DONE · One clean trade per session. That\'s the standard.',warning:'No Full Stack = No Trade. On Phase 1, protecting the account beats forcing a setup.'},
+    {day:17,phase:2,title:'Phase 1 Day 3 — Drawdown Check',tasks:['Before trading: check your current account balance','How much drawdown buffer do you have remaining?','If below 50% buffer: reduce position size by 50%','Never let yourself get within 20% of max drawdown'],focus:'DRAWDOWN FIRST · Check it before charts are even open'},
+    {day:18,phase:2,title:'Phase 1 Day 4 — Patience Session',tasks:['If no Full Stack setup: sit on your hands until 10:30','A day with no trade is a perfectly executed Phase 1 day','Write in journal: no trade today and your reasoning','Your drawdown is untouched. That is a win.'],focus:'ZERO TRADES = ZERO RISK · Phase 1 still alive'},
+    {day:19,phase:2,title:'Phase 1 Day 5 — Pace Check',tasks:['Current Phase 1 P&L vs profit target: what % are you at?','How many trading days have you completed?','At this pace: will you hit target before the deadline?','Adjust if needed — but never by increasing risk'],focus:'PROGRESS TRACKING · Steady pace wins. Never rush.'},
+    {day:20,phase:2,title:'Phase 1 Day 6 — SMT Only',tasks:['Today: entry only if SMT divergence is confirmed on NQ vs ES','No SMT confirmation = observation only','This filters to the absolute best setups only','Journal: was there SMT today? What did you observe?'],focus:'PREMIUM FILTER · SMT on Phase 1 = highest confidence entry'},
+    {day:21,phase:2,title:'Phase 1 Mid-Point Review',tasks:['Exactly where are you on profit target? Write the %','Have you stayed under daily loss limit every single session?','Minimum trading days: how many completed?','Projected finish: will you pass at this pace?'],focus:'MID-POINT AUDIT · Adjust pace only downward, never upward'},
+    {day:22,phase:2,title:'Phase 1 Day 8 — Conservative Mode',tasks:['If above 60% of target: reduce size by 30% this session','Protect the progress made — no reason to risk what\'s built','One clean small trade is better than one large risky one','Journal: how does being cautious feel versus being aggressive?'],focus:'PROTECT WHAT YOU\'VE BUILT · Never gamble accumulated profit'},
+    {day:23,phase:2,title:'Phase 1 Day 9 — Close Out Phase 3',tasks:['Execute your normal session with full rules','Current progress: where are you now?','If target is reachable in 1–2 more trades: plan for it','Write your Phase 1 closing strategy for the final week'],focus:'FINAL APPROACH · You can see the finish line. Don\'t sprint.'},
+    {day:24,phase:3,title:'Phase 1 Final Week — Target Mode',tasks:['If target is hit: STOP TRADING. Phase 1 is passed. Do not touch the account.','If not: continue clean execution with conservative size','Write your daily goal for remaining days','No hero trades. No gambling. Slow and clean.'],focus:'TARGET HIT? STOP. · The biggest Phase 1 mistake is trading after passing.'},
+    {day:25,phase:3,title:'Phase 1 Day 11 — Protect Mode',tasks:['Check your drawdown buffer before opening charts','If within 0.5% of profit target: reduce size by 70%','You are too close to risk a large loss now','Journal: what does it feel like to be this close?'],focus:'ALMOST THERE · This is where discipline matters most'},
+    {day:26,phase:3,title:'Phase 1 — Closing It Out',tasks:['If target hit today: immediately close all positions','Do not trade for the rest of the session','Take a screenshot of the account — you passed Phase 1','Prepare to move to Phase 2 of the evaluation'],focus:'CLOSE IT CLEAN · Pass Phase 1. Prepare for Phase 2.'},
+    {day:27,phase:3,title:'Phase 1 Passed — Post Analysis',tasks:['Review your complete Phase 1 journal','What was your win rate? Average R? Max drawdown touched?','What almost cost you the account?','What will you do differently in Phase 2?'],focus:'TRANSITION · Phase 2 is a different game. Prepare accordingly.'},
+    {day:28,phase:3,title:'Study Phase 2 Rules',tasks:['Your firm\'s Phase 2 profit target (usually lower than Phase 1)','Same drawdown rules? Or different? Read carefully.','Minimum trading days for Phase 2','Write your Phase 2 strategy: same method, lower target'],focus:'PHASE 2 PREP · Lower target. Same discipline. Easier pass.'},
+    {day:29,phase:3,title:'Mental Reset Before Phase 2',tasks:['You passed Phase 1. Reset your mindset completely.','Phase 2 is not harder — it is easier. Lower target.','The only danger in Phase 2 is overconfidence after Phase 1','Write: what mindset am I bringing into Phase 2?'],focus:'MENTAL RESET · Don\'t let Phase 1 success create Phase 2 arrogance'},
+    {day:30,phase:3,title:'Day 30 — Phase 1 Complete',tasks:['Celebrate — you completed 30 days with discipline','Write a full summary of Phase 1 from Day 1 to Day 30','What is your Phase 2 execution plan?','Share your progress with Keomazz — you earned it'],focus:'PHASE 1 DONE · Phase 2 is next. Same method. Cleaner execution.',tip:'Phase 1 was the hardest mental challenge. Phase 2 is the verification. You already proved you can do it.'}
+  ]
+},
+
+// ─────────────────────────────────────────────
+// PROP 2-PHASE — PHASE 2
+// ─────────────────────────────────────────────
+prop2b: {
+  id:'prop2b',
+  theme:'theme-prop2b',
+  accent:'#A78BFA',
+  accentGlow:'rgba(167,139,250,0.15)',
+  title:'PHASE 2<br><em>VERIFICATION</em>',
+  subtitle:'2-Phase Evaluation · Verify & Get Funded',
+  eyebrow:'Prop Firm · 2-Phase · Phase 2 + Funded',
+  desc:'You passed Phase 1. You proved you can trade. Now you verify. Lower profit target, same drawdown rules, same time pressure. Phase 2 is designed to make sure Phase 1 wasn\'t luck. Prove consistency. Get funded. Build toward your first payout.',
+  stats:[
+    {label:'Goal',val:'Verify + Fund'},
+    {label:'Target',val:'Lower Than P1'},
+    {label:'Focus',val:'Consistency'},
+    {label:'End Goal',val:'First Payout'},
+  ],
+  phases:[
+    {num:'01',tag:'Phase One · Days 1–7',title:'Reset & Rebuild Precision',desc:'You passed Phase 1 — now reset completely. Review what worked and what nearly cost you in Phase 1. This week sharpens your execution before the Phase 2 account begins. No overconfidence.',range:'Days 01 → 07 · Review + Reset · Mental preparation'},
+    {num:'02',tag:'Phase Two · Days 8–14',title:'Phase 2 Execution Begins',desc:'Real Phase 2 account. The target is lower — but the drawdown rules are the same. Execute one clean trade per day. Be more conservative than Phase 1. You have already proved you can trade.',range:'Days 08 → 14 · Real Phase 2 · Conservative clean execution'},
+    {num:'03',tag:'Phase Three · Days 15–23',title:'Secure the Pass',desc:'With a lower target, Phase 2 should be reachable within this window. Execute cleanly. The moment target is hit — stop trading immediately. Protect the verification.',range:'Days 15 → 23 · Hit target · Stop when passed · Protect'},
+    {num:'04',tag:'Phase Four · Days 24–30',title:'Funded Trader Preparation',desc:'You are funded or about to be. Phase 4 prepares you for the funded environment: payout strategy, scaling rules, funded drawdown limits. You are no longer an eval trader.',range:'Days 24 → 30 · Funded account · Payout strategy · Long game'}
+  ],
+  days:[
+    {day:1,phase:0,title:'Phase 1 Post-Mortem Review',tasks:['Read every journal entry from Phase 1','What was your win rate? Average R?','What was the closest you came to hitting the drawdown?','What one habit from Phase 1 will you carry into Phase 2?'],focus:'REVIEW PHASE 1 · Learn from what you already did'},
+    {day:2,phase:0,title:'Know Phase 2 Rules Exactly',tasks:['Write down Phase 2 profit target %','Write down Phase 2 daily loss limit (same as Phase 1?)','Write down Phase 2 max total drawdown','Write down Phase 2 minimum trading days'],focus:'RULES FIRST · Lower target. Same discipline required.'},
+    {day:3,phase:0,title:'HTF Analysis — Current Market',tasks:['Open NQ Daily + 4H — fresh eyes, no bias from Phase 1','Mark current structure: Bullish or Bearish?','Mark PDH/PDL, weekly levels, active FVGs','Write today\'s Magnetic Target in journal'],focus:'FRESH ANALYSIS · Markets change. Don\'t assume from Phase 1.'},
+    {day:4,phase:0,title:'Risk Recalculation for Phase 2 Account',tasks:['Phase 2 account size × 1% = max risk per trade','Phase 2 daily loss limit in exact dollar amount','If stop is 20pts on NQ: how many contracts?','Write these numbers — they may differ from Phase 1'],focus:'NEW NUMBERS · Recalculate everything from scratch'},
+    {day:5,phase:0,title:'Common Phase 2 Failure Points',tasks:['Research: why do traders fail Phase 2 after passing Phase 1?','Answer: overconfidence, increased size, looser rules','Write 3 traps you will consciously avoid','Phase 2 is easier than Phase 1 only if you don\'t get sloppy'],focus:'TRAPS · Awareness of failure prevents failure'},
+    {day:6,phase:0,title:'Replay — Phase 2 Warmup Session',tasks:['Run 2 replay sessions — treat as Phase 2 account','Track simulated P&L against Phase 2 profit target','Lower target means it should feel more achievable','Journal: does the lower target make you more or less careful?'],focus:'WARMUP · Phase 2 pressure is real even with a lower target'},
+    {day:7,phase:0,title:'Mental Preparation — The Final Push',tasks:['Phase 2 is not easier — it is different. Write the difference.','Write your Phase 2 daily game plan in one paragraph','What is your stop for the day if 2 losses happen?','Commit to the plan in writing before Day 8'],focus:'COMMITMENT · Written plans create accountable traders'},
+    {day:8,phase:1,title:'Phase 2 Day 1 — Observe Only',tasks:['Open Phase 2 account — DO NOT TRADE today','Complete The Read and mark all levels as normal','Watch The Window 9:30–10:30 — full observation only','Journal: what was the setup quality today?'],focus:'START CALM · First day is always observation. Always.'},
+    {day:9,phase:1,title:'Phase 2 Day 2 — First Trade',tasks:['Full Stack required — same strict standard as Phase 1','Conservative size — never exceed your 1% calculation','Stop set before order confirmed','One trade maximum — close charts immediately after'],focus:'CLEAN FIRST TRADE · The tone of Phase 2 is set on Day 2.',warning:'Phase 2 failure happens when traders get sloppy because the target is lower. Do not be that trader.'},
+    {day:10,phase:1,title:'Phase 2 Day 3 — Drawdown Check',tasks:['Check Phase 2 account balance before touching charts','How much drawdown buffer is remaining?','If below 60% buffer: position size -50% today','Track progress vs profit target: what % complete?'],focus:'PROGRESS TRACKING · Steady pace. No catching up by risking more.'},
+    {day:11,phase:1,title:'Phase 2 Day 4 — SMT Priority',tasks:['Today: entry only with SMT confirmation on NQ vs ES','Higher standard = higher quality results in Phase 2','No SMT = watch only','Journal: was there SMT today? Describe it.'],focus:'HIGHEST QUALITY · Phase 2 target is lower — you can afford to be selective'},
+    {day:12,phase:1,title:'Phase 2 Day 5 — Patience Test',tasks:['If no Full Stack setup appears: do not trade','A no-trade day on Phase 2 is completely fine with a low target','Write in journal: no trade today and why','How much of your target is completed so far?'],focus:'PATIENCE PAYS · Low target means you need very few perfect trades'},
+    {day:13,phase:1,title:'Phase 2 Day 6 — Pace Analysis',tasks:['Calculate exactly: current P&L vs Phase 2 target = % complete','At this pace: how many more clean trades to pass?','Are you being overly cautious or appropriately careful?','Adjust only if truly off pace — never by adding risk'],focus:'PACE CHECK · You should be close to passing by now'},
+    {day:14,phase:1,title:'Phase 2 — Close the Verification',tasks:['If target is within reach: execute one final clean trade','At target hit: STOP. Close everything. Phase 2 passed.','Do not trade after reaching the target','Screenshot account — prepare funded account request'],focus:'CLOSE IT · Target hit = stop immediately. Do not trade more.',tip:'The most expensive mistake in Phase 2 is trading after hitting the target. Stop the second you pass.'},
+    {day:15,phase:2,title:'Phase 2 Passed — Post Analysis',tasks:['Write a complete review of Phase 2 performance','Win rate, average R, max drawdown touched, total trades','What did you do better in Phase 2 vs Phase 1?','What will you do differently on the funded account?'],focus:'TRANSITION TO FUNDED · Different rules. Different mindset. Prepare.'},
+    {day:16,phase:2,title:'Study Your Funded Account Rules',tasks:['Funded daily loss limit — often different from eval','Funded max drawdown — often stricter','Payout schedule: when can you request first payout?','Scaling plan: does your firm have a scaling program?'],focus:'FUNDED RULES · Read them carefully. They differ from eval rules.'},
+    {day:17,phase:2,title:'Funded Account — First Day Observe',tasks:['Log into funded account — DO NOT TRADE today','Mark levels and watch The Window — observation only','The funded account is real money — respect it','Journal: how does it feel to be on a funded account?'],focus:'FUNDED DAY 1 · Same strategy. Different weight. Stay calm.'},
+    {day:18,phase:2,title:'Funded Account — First Trade',tasks:['Conservative size — even smaller than your 1% might suggest','Full Stack required — non-negotiable on funded','One trade maximum for the first funded session','Journal: how did execution feel with funded money behind it?'],focus:'FUNDED FIRST TRADE · Small. Clean. Calm.',warning:'Do not increase size just because you\'re funded. The strategy that passed the eval is the strategy that makes you money.'},
+    {day:19,phase:2,title:'Funded — Drawdown Discipline',tasks:['Funded max drawdown is often stricter than eval','Check your buffer before every single funded session','If drawdown is within 40% of limit: stop for the day','Never let your funded account approach max drawdown'],focus:'FUNDED PROTECTION · Losing a funded account hurts more than failing eval'},
+    {day:20,phase:2,title:'Funded — Consistency Building',tasks:['Execute The Window as normal with full rules','Your only goal on funded is: consistent small positive returns','One clean trade per day, 5 days per week = powerful monthly P&L','Journal: are you treating funded differently from eval?'],focus:'CONSISTENCY > SIZE · Small consistent funded profits compound fast'},
+    {day:21,phase:2,title:'Funded Week 1 Review',tasks:['Review first full week of funded trading','Total P&L, win rate, max drawdown touched','Did you follow every rule every day?','Are you on pace for your first payout?'],focus:'FUNDED WEEK 1 DATA · Let the numbers tell you the story'},
+    {day:22,phase:2,title:'Funded — Payout Strategy',tasks:['When is your first eligible payout date?','What % do you need to reach your profit split?','Write a specific payout goal: amount and date','Payout first — scale later. Never scale before first payout.'],focus:'PAYOUT FIRST · Get money out of the firm before adding risk'},
+    {day:23,phase:2,title:'Funded — SMT Only Session',tasks:['Today: entry only with SMT divergence confirmed','Highest quality setups = highest confidence = best funded results','No SMT = no trade today','Journal your observation regardless of whether you traded'],focus:'PREMIUM STANDARD · Funded accounts reward quality above quantity'},
+    {day:24,phase:3,title:'Funded — Week 2 Execution',tasks:['Continue clean execution at your established size','Review: is your funded P&L growing consistently?','Have you stayed within funded drawdown rules every day?','Are you close to first payout eligibility?'],focus:'WEEK 2 FUNDED · Build the streak. Don\'t break it.'},
+    {day:25,phase:3,title:'Funded — Scale Decision Review',tasks:['Does your firm have a scaling plan? Check the requirements.','Most firms scale after X% profit or X months consistent','Write the exact conditions you need to meet for scaling','Do not chase scaling — it comes with consistent execution'],focus:'SCALING IS EARNED · Consistency unlocks it. Impatience loses the account.'},
+    {day:26,phase:3,title:'Funded — Payout Execution',tasks:['If payout is eligible: request it today. Do not wait.','Getting money out of the firm is always the right move','Continue trading normally after requesting payout','Journal: how does it feel to be a funded trader making payouts?'],focus:'REQUEST THE PAYOUT · You earned it. Take it.'},
+    {day:27,phase:3,title:'Funded — Long-Term Plan',tasks:['Write your 3-month funded trading goal with specific numbers','How many clean trades per week at your current win rate?','What does your funded account look like in 6 months?','Compounded consistency is the most powerful tool you have'],focus:'THE LONG GAME · Funded trading is a career. Treat it like one.'},
+    {day:28,phase:3,title:'Full 30-Day Audit',tasks:['Review the entire journey: Phase 1 eval → Phase 2 eval → Funded','Total trades across all stages, win rate, max drawdown','Your biggest lesson from the entire process','What will you do differently in your next scaling cycle?'],focus:'COMPLETE AUDIT · You came a long way in 30 days'},
+    {day:29,phase:3,title:'Funded — Identity Shift',tasks:['You are no longer a student. You are a funded professional trader.','Write what that means to you in practical terms','What daily habits will you maintain for the next 6 months?','What does your trading environment look like from Day 31 forward?'],focus:'NEW IDENTITY · Act like the trader you want to become. Every day.'},
+    {day:30,phase:3,title:'Day 30 — Funded & Complete',tasks:['Execute your normal funded session with full rules','After: write a letter to Day 1 eval you — the transformation','List 5 things you know now that you didn\'t know on Day 1','Share your funded status with Keomazz — you made it'],focus:'FUNDED TRADER. 30 DAYS. COMPLETE.',tip:'You went from starting an evaluation to being a funded professional trader in 30 days. Most people never get here. You did. Keep going.'}
+  ]
+}
+
+}; // end JOURNEYS
+
+// ════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════
+var currentJourney = null;
+
+function getCompleted(id) {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY+'_'+id) || '[]'); } catch(e) { return []; }
+}
+function saveCompleted(id, arr) {
+  try { localStorage.setItem(STORAGE_KEY+'_'+id, JSON.stringify(arr)); } catch(e) {}
+}
+function toggleDay(id, day) {
+  var arr = getCompleted(id);
+  var idx = arr.indexOf(day);
+  if (idx === -1) arr.push(day); else arr.splice(idx,1);
+  saveCompleted(id, arr);
+  renderProgress(id);
+  renderDayCards(id);
+}
+
+// ════════════════════════════════════════════════════════
+// RENDER
+// ════════════════════════════════════════════════════════
+function startJourney(id) {
+  currentJourney = id;
+  document.getElementById('selectorScreen').style.display = 'none';
+  var js = document.getElementById('journeyScreen');
+  js.style.display = 'block';
+  js.innerHTML = buildJourneyHTML(id);
+
+  // Attach click handlers to day cards
+  var j = JOURNEYS[id];
+  j.days.forEach(function(d) {
+    var card = document.getElementById('day-card-'+d.day);
+    if (card) card.addEventListener('click', function() { toggleDay(id, d.day); });
+  });
+
+  renderProgress(id);
+  renderDayCards(id);
+
+  window.scrollTo(0,0);
+}
+
+function buildJourneyHTML(id) {
+  var j = JOURNEYS[id];
+  var phaseDots = j.phases.map(function(p,i){
+    return '<span class="j-phase-dot-label">'+p.tag.split('·')[0].trim()+'</span>';
+  }).join('');
+
+  var heroStyle = 'color:'+j.accent+';';
+
+  var html = '<div class="'+j.theme+'">';
+
+  // Hero
+  html += '<div class="j-hero">';
+  html += '<div class="j-hero-bg">';
+  html += '<div class="j-hero-grid"></div>';
+  html += '<div class="j-hero-glow" style="background:'+j.accent+'"></div>';
+  html += '<div class="j-hero-vignette"></div>';
+  html += '<div class="j-ring" style="border-color:rgba(255,255,255,0.04)"><span style="display:block;position:absolute;top:-4px;left:50%;width:8px;height:8px;background:'+j.accent+';border-radius:50%;margin-left:-4px;box-shadow:0 0 10px '+j.accent+'"></span></div>';
+  html += '<div class="j-ring2"></div>';
+  html += '</div>';
+  html += '<div class="j-hero-content">';
+  html += '<button class="back-btn" onclick="goBack()">← Back to Journey Select</button>';
+  html += '<div class="j-hero-eyebrow" style="'+heroStyle+'">'+j.eyebrow+'</div>';
+  html += '<div class="j-hero-title">'+j.title+'</div>';
+  html += '<div class="j-hero-subtitle">'+j.subtitle+'</div>';
+  html += '<p class="j-hero-desc" style="border-left-color:'+j.accent+'">'+j.desc+'</p>';
+  html += '<div class="j-hero-stats">';
+  j.stats.forEach(function(s){
+    html += '<div><div class="j-stat-label">'+s.label+'</div><div class="j-stat-val" style="'+heroStyle+'">'+s.val+'</div></div>';
+  });
+  html += '</div></div></div>';
+
+  // Progress
+  html += '<div class="j-progress">';
+  html += '<div class="j-progress-header">';
+  html += '<span class="j-progress-label" style="'+heroStyle+'">Progress</span>';
+  html += '<span class="j-progress-pct" id="pct-'+id+'">0%</span>';
+  html += '</div>';
+  html += '<div class="j-progress-bar"><div class="j-progress-fill" id="fill-'+id+'" style="width:0%;background:'+j.accent+';"></div></div>';
+  html += '<div class="j-phase-dots">'+phaseDots+'</div>';
+  html += '<div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:2px;color:var(--text3);margin-top:8px" id="count-'+id+'">0 / 30 days completed</div>';
+  html += '</div>';
+
+  // Phases + Days
+  j.phases.forEach(function(phase, pi) {
+    var phaseDays = j.days.filter(function(d){ return d.phase === pi; });
+
+    html += '<div class="j-phase-intro">';
+    html += '<div class="j-phase-line" style="background:'+j.accent+'"></div>';
+    html += '<div class="j-phase-bg-num">'+phase.num+'</div>';
+    html += '<div class="j-phase-tag" style="color:'+j.accent+'">'+phase.tag+'</div>';
+    html += '<div class="j-phase-title">'+phase.title+'</div>';
+    html += '<p class="j-phase-desc">'+phase.desc+'</p>';
+    html += '<div class="j-phase-range">'+phase.range+'</div>';
+    html += '</div>';
+
+    html += '<div class="j-days" id="phase-days-'+id+'-'+pi+'">';
+    phaseDays.forEach(function(d){
+      html += buildDayCard(d, j.accent, false);
+    });
+    html += '</div>';
+  });
+
+  // Completion
+  html += '<div class="j-completion" id="completion-'+id+'">';
+  html += '<div class="j-completion-title">🏆 30 Days.<br><span style="color:'+j.accent+';font-style:italic">Complete.</span></div>';
+  html += '<p class="j-completion-sub">You showed up every single day for 30 days and did the work. That is not common. Most people stop in week one. You didn\'t. Now go trade professionally.</p>';
+  html += '</div>';
+
+  html += '<div class="j-footer"><span>Keomazz Trading — '+j.eyebrow+'</span><span>Confidential — Personal Use Only</span></div>';
+  html += '</div>'; // theme wrapper
+
+  html += '<button class="j-reset" onclick="resetJ()">Reset Progress</button>';
+
+  return html;
+}
+
+function buildDayCard(d, accent, completed) {
+  var cls = 'day-card d-card' + (completed ? ' done' : '');
+  var tasks = d.tasks.map(function(t){
+    return '<li class="d-task">'+t+'</li>';
+  }).join('');
+
+  var extra = '';
+  if (d.warning) extra += '<div class="d-warning">⚠ '+d.warning+'</div>';
+  if (d.tip)     extra += '<div class="d-tip">✓ '+d.tip+'</div>';
+
+  return '<div class="'+cls+'" id="day-card-'+d.day+'" data-day="'+d.day+'">' +
+    '<div class="d-phase-bar" style="background:'+accent+'"></div>' +
+    '<div class="d-header">' +
+      '<div class="d-num" style="color:'+accent+'">'+String(d.day).padStart(2,'0')+'</div>' +
+      '<div class="d-check"><span class="d-check-icon">✓</span></div>' +
+    '</div>' +
+    '<div class="d-title">'+d.title+'</div>' +
+    '<ul class="d-tasks">'+tasks+'</ul>' +
+    '<div class="d-focus" style="color:rgba('+hexToRgb(accent)+',0.7)">'+d.focus+'</div>' +
+    extra +
+  '</div>';
+}
+
+function renderProgress(id) {
+  var completed = getCompleted(id);
+  var count = completed.length;
+  var pct = Math.round(count/30*100);
+  var fillEl = document.getElementById('fill-'+id);
+  var pctEl  = document.getElementById('pct-'+id);
+  var countEl= document.getElementById('count-'+id);
+  var compEl = document.getElementById('completion-'+id);
+  if (fillEl)  fillEl.style.width = pct+'%';
+  if (pctEl)   pctEl.textContent = pct+'%';
+  if (countEl) countEl.textContent = count+' / 30 days completed';
+  if (compEl)  { if (count >= 30) compEl.classList.add('show'); else compEl.classList.remove('show'); }
+}
+
+function renderDayCards(id) {
+  var j = JOURNEYS[id];
+  var completed = getCompleted(id);
+  j.days.forEach(function(d) {
+    var card = document.getElementById('day-card-'+d.day);
+    if (!card) return;
+    var isDone = completed.indexOf(d.day) !== -1;
+    if (isDone) card.classList.add('done'); else card.classList.remove('done');
+  });
+}
+
+function goBack() {
+  document.getElementById('journeyScreen').style.display = 'none';
+  document.getElementById('journeyScreen').innerHTML = '';
+  document.getElementById('selectorScreen').style.display = 'block';
+  currentJourney = null;
+  window.scrollTo(0,0);
+}
+
+window.resetJ = function() {
+  if (!currentJourney) return;
+  if (confirm('Reset all progress for this journey?')) {
+    try { localStorage.removeItem(STORAGE_KEY+'_'+currentJourney); } catch(e) {}
+    renderProgress(currentJourney);
+    renderDayCards(currentJourney);
+  }
+};
+
+window.goBack = goBack;
+window.startJourney = startJourney;
+
+// Hex to RGB helper
+function hexToRgb(hex) {
+  var r = parseInt(hex.slice(1,3),16);
+  var g = parseInt(hex.slice(3,5),16);
+  var b = parseInt(hex.slice(5,7),16);
+  return r+','+g+','+b;
+}
+
+})();
+</script>
+
+</body>
+</html>
